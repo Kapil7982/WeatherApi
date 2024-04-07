@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forecast App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Weather Forecast</h1>
+        <div>
+            <label for="cityInput">Enter City Name:</label>
+            <input type="text" id="cityInput" placeholder="Enter city name">
+            <button onclick="getForecastSummary()">Get Forecast Summary</button>
+            <button onclick="getHourlyForecast()">Get Hourly Forecast</button>
+        </div>
+        <div id="forecastSummary"></div>
+        <div id="hourlyForecast"></div>
+    </div>
+
+    <script>
+        function getForecastSummary() {
+            var cityName = document.getElementById("cityInput").value;
+            var clientId = "clientId1"; 
+            var clientSecret = "secreat1"; 
+            fetch("http://localhost:8080/forecast/summary?locationName=" + cityName, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Client-ID": clientId,
+                    "X-Client-Secret": clientSecret
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                var forecastSummaryDiv = document.getElementById("forecastSummary");
+                forecastSummaryDiv.innerHTML = ""; // Clear previous content
+                var pre = document.createElement("pre");
+                pre.textContent = JSON.stringify(data, null, 2); // Pretty-print the JSON data
+                forecastSummaryDiv.appendChild(pre);
+
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function getHourlyForecast() {
+            var cityName = document.getElementById("cityInput").value;
+            var clientId = "clientId1"; 
+            var clientSecret = "secreat1";
+            fetch("http://localhost:8080/forecast/hourly/openweathermap?cityName=" + cityName,{
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Client-ID": clientId,
+                    "X-Client-Secret": clientSecret
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                var hourlyForecastDiv = document.getElementById("hourlyForecast");
+                hourlyForecastDiv.innerHTML = ""; // Clear previous content
+                var pre = document.createElement("pre");
+                pre.textContent = JSON.stringify(data, null, 2); // Pretty-print the JSON data
+                hourlyForecastDiv.appendChild(pre);
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
