@@ -25,12 +25,24 @@ public class WeatherController {
     @GetMapping("/forecast/summary")
     public String getForecastSummary(@RequestParam String locationName, @RequestHeader("X-Client-ID") String clientId, 
     		@RequestHeader("X-Client-Secret")String clientSecret) throws IOException {
-        return weatherService.getForecastSummaryByLocation(locationName);
+    	try {
+    		 return weatherService.getForecastSummaryByLocation(locationName);
+    	}
+    	catch (IOException e) {
+            e.printStackTrace();
+            return "Error occurred while fetching forecast summary.";
+        }
+       
     }
 
     @GetMapping("/forecast/hourly/openweathermap")
     public String getHourlyForecastFromOpenWeatherMap(@RequestParam String cityName, @RequestHeader("X-Client-ID") String clientId,
             @RequestHeader("X-Client-Secret") String clientSecret) throws IOException {
-        return weatherService.getHourlyForecastByCity(cityName); 
+    	try {
+            return weatherService.getHourlyForecastByCity(cityName);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Error occurred while fetching hourly forecast.";
+        }
     }
 }

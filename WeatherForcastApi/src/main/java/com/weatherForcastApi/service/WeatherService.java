@@ -34,9 +34,15 @@ public class WeatherService {
 
     public WeatherService(OkHttpClient okHttpClient) {
         this.okHttpClient = okHttpClient;
+        this.rapidApiKey = "Paste_your_rapid_api_key"; 
+        this.rapidApiHost = "Paste_your_rapid_api_host";
+        this.openWeatherMapApiKey = "Paste_your_open_weather_map_api_key";
     }
 
-    public String getForecastSummaryByLocation(String locationName) throws IOException {
+    public String getForecastSummaryByLocation(String locationName) throws IOException,IllegalArgumentException  {
+    	if (locationName == null || locationName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Location name cannot be null or empty.");
+        }
         Request request = new Request.Builder()
                 .url("https://forecast9.p.rapidapi.com/rapidapi/forecast/" + locationName + "/summary/")
                 .get()
@@ -49,9 +55,16 @@ public class WeatherService {
         try (Response response = okHttpClient.newCall(request).execute()) {
             return response.body().string();
         }
+        catch (IOException e) {
+            e.printStackTrace();
+            return "An error occurred while fetching forecast summary for location: " + e.getMessage();
+        }
     }
 
-    public String getHourlyForecastByCity(String cityName) throws IOException {
+    public String getHourlyForecastByCity(String cityName) throws IOException, IllegalArgumentException {
+    	if (cityName == null || cityName.trim().isEmpty()) {
+            throw new IllegalArgumentException("City name cannot be null or empty.");
+        }
         String url = "http://api.openweathermap.org/data/2.5/forecast?q=" + cityName + "&appid=" + openWeatherMapApiKey;
         Request request = new Request.Builder()
                 .url(url)
@@ -62,6 +75,10 @@ public class WeatherService {
 
         try (Response response = okHttpClient.newCall(request).execute()) {
             return response.body().string();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            return "An error occurred while fetching hourly forecast for city: " + e.getMessage();
         }
     }
 
